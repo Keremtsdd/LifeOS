@@ -1,5 +1,6 @@
 using LifeOs.Entities;
 using LifeOs.Interfaces;
+using LifeOs.Context;
 
 namespace LifeOs.Repositories
 {

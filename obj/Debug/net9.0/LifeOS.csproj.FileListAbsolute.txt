@@ -7,7 +7,6 @@ C:\Users\tastk\OneDrive\Documents\GitHub\LifeOS\bin\Debug\net9.0\LifeOS.runtimec
 C:\Users\tastk\OneDrive\Documents\GitHub\LifeOS\bin\Debug\net9.0\LifeOS.dll
 C:\Users\tastk\OneDrive\Documents\GitHub\LifeOS\bin\Debug\net9.0\LifeOS.pdb
 C:\Users\tastk\OneDrive\Documents\GitHub\LifeOS\bin\Debug\net9.0\AutoMapper.dll
-C:\Users\tastk\OneDrive\Documents\GitHub\LifeOS\bin\Debug\net9.0\AutoMapper.Extensions.Microsoft.DependencyInjection.dll
 C:\Users\tastk\OneDrive\Documents\GitHub\LifeOS\bin\Debug\net9.0\Azure.Core.dll
 C:\Users\tastk\OneDrive\Documents\GitHub\LifeOS\bin\Debug\net9.0\Azure.Identity.dll
 C:\Users\tastk\OneDrive\Documents\GitHub\LifeOS\bin\Debug\net9.0\Humanizer.dll
@@ -26,11 +25,7 @@ C:\Users\tastk\OneDrive\Documents\GitHub\LifeOS\bin\Debug\net9.0\Microsoft.Entit
 C:\Users\tastk\OneDrive\Documents\GitHub\LifeOS\bin\Debug\net9.0\Microsoft.EntityFrameworkCore.Design.dll
 C:\Users\tastk\OneDrive\Documents\GitHub\LifeOS\bin\Debug\net9.0\Microsoft.EntityFrameworkCore.Relational.dll
 C:\Users\tastk\OneDrive\Documents\GitHub\LifeOS\bin\Debug\net9.0\Microsoft.EntityFrameworkCore.SqlServer.dll
-C:\Users\tastk\OneDrive\Documents\GitHub\LifeOS\bin\Debug\net9.0\Microsoft.Extensions.DependencyInjection.Abstractions.dll
 C:\Users\tastk\OneDrive\Documents\GitHub\LifeOS\bin\Debug\net9.0\Microsoft.Extensions.DependencyModel.dll
-C:\Users\tastk\OneDrive\Documents\GitHub\LifeOS\bin\Debug\net9.0\Microsoft.Extensions.Logging.Abstractions.dll
-C:\Users\tastk\OneDrive\Documents\GitHub\LifeOS\bin\Debug\net9.0\Microsoft.Extensions.Options.dll
-C:\Users\tastk\OneDrive\Documents\GitHub\LifeOS\bin\Debug\net9.0\Microsoft.Extensions.Primitives.dll
 C:\Users\tastk\OneDrive\Documents\GitHub\LifeOS\bin\Debug\net9.0\Microsoft.Identity.Client.dll
 C:\Users\tastk\OneDrive\Documents\GitHub\LifeOS\bin\Debug\net9.0\Microsoft.Identity.Client.Extensions.Msal.dll
 C:\Users\tastk\OneDrive\Documents\GitHub\LifeOS\bin\Debug\net9.0\Microsoft.IdentityModel.Abstractions.dll
@@ -53,7 +48,6 @@ C:\Users\tastk\OneDrive\Documents\GitHub\LifeOS\bin\Debug\net9.0\System.Composit
 C:\Users\tastk\OneDrive\Documents\GitHub\LifeOS\bin\Debug\net9.0\System.Composition.Runtime.dll
 C:\Users\tastk\OneDrive\Documents\GitHub\LifeOS\bin\Debug\net9.0\System.Composition.TypedParts.dll
 C:\Users\tastk\OneDrive\Documents\GitHub\LifeOS\bin\Debug\net9.0\System.Configuration.ConfigurationManager.dll
-C:\Users\tastk\OneDrive\Documents\GitHub\LifeOS\bin\Debug\net9.0\System.Diagnostics.DiagnosticSource.dll
 C:\Users\tastk\OneDrive\Documents\GitHub\LifeOS\bin\Debug\net9.0\System.Drawing.Common.dll
 C:\Users\tastk\OneDrive\Documents\GitHub\LifeOS\bin\Debug\net9.0\System.IdentityModel.Tokens.Jwt.dll
 C:\Users\tastk\OneDrive\Documents\GitHub\LifeOS\bin\Debug\net9.0\System.Memory.Data.dll
@@ -157,3 +151,6 @@ C:\Users\tastk\OneDrive\Documents\GitHub\LifeOS\obj\Debug\net9.0\refint\LifeOS.d
 C:\Users\tastk\OneDrive\Documents\GitHub\LifeOS\obj\Debug\net9.0\LifeOS.pdb
 C:\Users\tastk\OneDrive\Documents\GitHub\LifeOS\obj\Debug\net9.0\LifeOS.genruntimeconfig.cache
 C:\Users\tastk\OneDrive\Documents\GitHub\LifeOS\obj\Debug\net9.0\ref\LifeOS.dll
+C:\Users\tastk\OneDrive\Documents\GitHub\LifeOS\bin\Debug\net9.0\Swashbuckle.AspNetCore.Swagger.dll
+C:\Users\tastk\OneDrive\Documents\GitHub\LifeOS\bin\Debug\net9.0\Swashbuckle.AspNetCore.SwaggerGen.dll
+C:\Users\tastk\OneDrive\Documents\GitHub\LifeOS\bin\Debug\net9.0\Swashbuckle.AspNetCore.SwaggerUI.dll
