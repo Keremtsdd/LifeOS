@@ -4,11 +4,13 @@ using LifeOs.Context;
 using LifeOs.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
 
 namespace LifeOs.Controller.Public
 {
+    [Authorize]
     [ApiController]
-    [Route("api[controller]")]
+    [Route("api/[controller]")]
     public class ActivitiesController : ControllerBase
     {
         private readonly AppDbContext _context;
@@ -25,7 +27,7 @@ namespace LifeOs.Controller.Public
         [HttpPost("create")]
         public async Task<IActionResult> CreateActivity([FromBody] ActivityCreateDto dto)
         {
-            string userId = "test-user-001";
+            string userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
 
             if (dto.DurationMinutes <= 0)
                 return BadRequest(new { message = "Süre 0'dan büyük olmalıdır." });
@@ -60,7 +62,7 @@ namespace LifeOs.Controller.Public
         [HttpGet("myactivities")]
         public async Task<IActionResult> GetUserActivities()
         {
-            string userId = "test-user-001";
+            string userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
 
             var activities = await _context.UserActivities
                  .Include(c => c.Category)

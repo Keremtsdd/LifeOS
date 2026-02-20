@@ -3,6 +3,7 @@ using System;
 using LifeOs.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace LifeOS.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260220115016_MakeDescriptionNullable")]
+    partial class MakeDescriptionNullable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -60,7 +63,7 @@ namespace LifeOS.Migrations
                         {
                             Id = 1,
                             ColorHex = "#FF4B2B",
-                            CreatedDate = new DateTime(2026, 2, 20, 12, 18, 59, 109, DateTimeKind.Utc).AddTicks(8449),
+                            CreatedDate = new DateTime(2026, 2, 20, 11, 50, 15, 618, DateTimeKind.Utc).AddTicks(3923),
                             Icon = "fitness",
                             IsDeleted = false,
                             Name = "Physical",
@@ -70,7 +73,7 @@ namespace LifeOS.Migrations
                         {
                             Id = 2,
                             ColorHex = "#AF40FF",
-                            CreatedDate = new DateTime(2026, 2, 20, 12, 18, 59, 109, DateTimeKind.Utc).AddTicks(9102),
+                            CreatedDate = new DateTime(2026, 2, 20, 11, 50, 15, 618, DateTimeKind.Utc).AddTicks(4552),
                             Icon = "school",
                             IsDeleted = false,
                             Name = "Learning",
@@ -80,7 +83,7 @@ namespace LifeOS.Migrations
                         {
                             Id = 3,
                             ColorHex = "#2196F3",
-                            CreatedDate = new DateTime(2026, 2, 20, 12, 18, 59, 109, DateTimeKind.Utc).AddTicks(9103),
+                            CreatedDate = new DateTime(2026, 2, 20, 11, 50, 15, 618, DateTimeKind.Utc).AddTicks(4554),
                             Icon = "work",
                             IsDeleted = false,
                             Name = "Work",
@@ -90,7 +93,7 @@ namespace LifeOS.Migrations
                         {
                             Id = 4,
                             ColorHex = "#4CAF50",
-                            CreatedDate = new DateTime(2026, 2, 20, 12, 18, 59, 109, DateTimeKind.Utc).AddTicks(9104),
+                            CreatedDate = new DateTime(2026, 2, 20, 11, 50, 15, 618, DateTimeKind.Utc).AddTicks(4554),
                             Icon = "groups",
                             IsDeleted = false,
                             Name = "Social",
@@ -100,7 +103,7 @@ namespace LifeOS.Migrations
                         {
                             Id = 5,
                             ColorHex = "#FFC107",
-                            CreatedDate = new DateTime(2026, 2, 20, 12, 18, 59, 109, DateTimeKind.Utc).AddTicks(9105),
+                            CreatedDate = new DateTime(2026, 2, 20, 11, 50, 15, 618, DateTimeKind.Utc).AddTicks(4555),
                             Icon = "self-improvement",
                             IsDeleted = false,
                             Name = "Mental",
@@ -110,7 +113,7 @@ namespace LifeOS.Migrations
                         {
                             Id = 6,
                             ColorHex = "#E91E63",
-                            CreatedDate = new DateTime(2026, 2, 20, 12, 18, 59, 109, DateTimeKind.Utc).AddTicks(9106),
+                            CreatedDate = new DateTime(2026, 2, 20, 11, 50, 15, 618, DateTimeKind.Utc).AddTicks(4556),
                             Icon = "palette",
                             IsDeleted = false,
                             Name = "Creative",
@@ -156,7 +159,7 @@ namespace LifeOS.Migrations
                             Id = 1,
                             CurrentLevelXP = 0,
                             FullName = "Kerem Taşdemir",
-                            IdentityId = "32e446bb-a304-4f7e-acc8-93c81fe5f8b8",
+                            IdentityId = "test-user-001",
                             Level = 1,
                             NextLevelXP = 1000,
                             TotalXP = 0

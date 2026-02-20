@@ -154,3 +154,4 @@ C:\Users\tastk\OneDrive\Documents\GitHub\LifeOS\obj\Debug\net9.0\ref\LifeOS.dll
 C:\Users\tastk\OneDrive\Documents\GitHub\LifeOS\bin\Debug\net9.0\Swashbuckle.AspNetCore.Swagger.dll
 C:\Users\tastk\OneDrive\Documents\GitHub\LifeOS\bin\Debug\net9.0\Swashbuckle.AspNetCore.SwaggerGen.dll
 C:\Users\tastk\OneDrive\Documents\GitHub\LifeOS\bin\Debug\net9.0\Swashbuckle.AspNetCore.SwaggerUI.dll
+C:\Users\tastk\OneDrive\Documents\GitHub\LifeOS\bin\Debug\net9.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll

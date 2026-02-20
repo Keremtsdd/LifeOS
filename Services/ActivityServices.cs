@@ -1,42 +1,61 @@
 using LifeOs.DTOs;
 using LifeOs.Entities;
 using LifeOs.Interfaces;
-using AutoMapper;
+using LifeOs.Context;
+using Microsoft.EntityFrameworkCore;
 
 namespace LifeOs.Services
 {
     public class ActivityServices
     {
-        private readonly IMapper _mapper;
         private readonly IUnitOfWork _unitOfWork;
-        private readonly ICategoryRepository _categoryRepository;
-        private readonly IActivityRepository _activityRepository;
+        private readonly AppDbContext _context;
 
-        public ActivityServices(
-            IMapper mapper,
-            IUnitOfWork unitOfWork,
-            ICategoryRepository categoryRepository,
-            IActivityRepository activityRepository)
+        public ActivityServices(IUnitOfWork unitOfWork, AppDbContext context)
         {
-            _mapper = mapper;
             _unitOfWork = unitOfWork;
-            _categoryRepository = categoryRepository;
-            _activityRepository = activityRepository;
+            _context = context;
         }
 
         public async Task<int> CreateActivityAsync(ActivityCreateDto dto, string userId)
         {
-            var category = await _categoryRepository.GetByIdAsync(dto.CategoryId);
-            int calculatedXP = (int)(dto.DurationMinutes * category.XPMultiplier * 10);
+            var category = await _context.Categories.FindAsync(dto.CategoryId);
+            if (category == null) throw new Exception("Kategori Bulunamadı!");
 
-            var activity = _mapper.Map<UserActivity>(dto);
-            activity.UserId = userId;
-            activity.EarnedXP = calculatedXP;
+            int earnedXp = (int)(dto.DurationMinutes * category.XPMultiplier);
 
-            await _activityRepository.AddAsync(activity);
+            var activity = new UserActivity
+            {
+                UserId = userId,
+                Title = dto.Title,
+                DurationMinutes = dto.DurationMinutes,
+                CategoryId = dto.CategoryId,
+                EarnedXP = earnedXp,
+                CreatedDate = DateTime.UtcNow
+            };
+
+            await _context.UserActivities.AddAsync(activity);
+            await UpdateUserProgress(userId, earnedXp);
+
             await _unitOfWork.CommitAsync();
+            return earnedXp;
+        }
 
-            return calculatedXP;
+        private async Task UpdateUserProgress(string userId, int earnedXp)
+        {
+            var user = await _context.Users.FirstOrDefaultAsync(c => c.IdentityId == userId);
+            if (user == null) return;
+
+            user.TotalXP += earnedXp;
+            user.CurrentLevelXP += earnedXp;
+
+            while (user.CurrentLevelXP > user.NextLevelXP)
+            {
+                user.CurrentLevelXP -= user.NextLevelXP;
+                user.Level++;
+
+                user.NextLevelXP = (int)(user.NextLevelXP * 1.2);
+            }
         }
     }
 }

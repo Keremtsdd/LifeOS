@@ -9,6 +9,7 @@ namespace LifeOs.Context
 
         public DbSet<Category> Categories { get; set; }
         public DbSet<UserActivity> UserActivities { get; set; }
+        public DbSet<User> Users { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -25,7 +26,23 @@ namespace LifeOs.Context
                 new Category { Id = 5, Name = "Mental", Icon = "self-improvement", ColorHex = "#FFC107", XPMultiplier = 1.3 },
                 new Category { Id = 6, Name = "Creative", Icon = "palette", ColorHex = "#E91E63", XPMultiplier = 1.4 }
             );
+
+
+            modelBuilder.Entity<User>().HasData(
+                new User
+                {
+                    Id = 1,
+                    IdentityId = "32e446bb-a304-4f7e-acc8-93c81fe5f8b8",
+                    FullName = "Kerem Taşdemir",
+                    Level = 1,
+                    TotalXP = 0,
+                    CurrentLevelXP = 0,
+                    NextLevelXP = 1000
+                }
+            );
+
             base.OnModelCreating(modelBuilder);
+
         }
     }
 }
