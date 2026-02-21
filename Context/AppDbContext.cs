@@ -32,7 +32,7 @@ namespace LifeOs.Context
                 new User
                 {
                     Id = 1,
-                    IdentityId = "32e446bb-a304-4f7e-acc8-93c81fe5f8b8",
+                    IdentityId = "26867e6c-bb13-4843-a261-8d0e03e0d038",
                     FullName = "Kerem Taşdemir",
                     Level = 1,
                     TotalXP = 0,
