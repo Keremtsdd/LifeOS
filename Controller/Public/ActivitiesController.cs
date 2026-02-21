@@ -149,5 +149,79 @@ namespace LifeOs.Controller.Public
                 MyInfo = new { currentUser?.FullName, currentUser?.TotalXP, currentUser?.Level }
             });
         }
+
+        [HttpGet("goals-progress")]
+        public async Task<IActionResult> GetGoalsProgress()
+        {
+            var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+
+            var startOfWeek = DateTime.UtcNow.Date.AddDays(-(int)DateTime.UtcNow.DayOfWeek + (int)DayOfWeek.Monday);
+
+            var goals = await _context.WeeklyGoals
+                .Where(g => g.UserId == userId)
+                .Include(g => g.Category)
+                .Select(g => new
+                {
+                    CategoryName = g.Category.Name,
+                    TargetMinutes = g.TargetMinutes,
+                    CurrentMinutes = _context.UserActivities
+                        .Where(a => a.UserId == userId && a.CategoryId == g.CategoryId && a.CreatedDate >= startOfWeek)
+                        .Sum(a => a.DurationMinutes)
+                })
+                .ToListAsync();
+
+            return Ok(goals);
+        }
+
+        [HttpGet("weeklyxpchart")]
+        public async Task<IActionResult> GetWeeklyXpChart()
+        {
+            var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            var sevenDaysAgo = DateTime.UtcNow.Date.AddDays(-7);
+
+            var chartData = await _context.UserActivities
+                .Where(a => a.UserId == userId && a.CreatedDate >= sevenDaysAgo)
+                .GroupBy(a => a.CreatedDate.Date)
+                .Select(g => new
+                {
+                    Date = g.Key.ToString("dd/MM"),
+                    DailyXP = g.Sum(a => a.EarnedXP)
+                })
+                .OrderBy(x => x.Date)
+                .ToListAsync();
+
+            return Ok(chartData);
+        }
+
+        [HttpGet("stats-summary")]
+        public async Task<IActionResult> GetStatsSummary()
+        {
+            var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            var sevenDaysAgo = DateTime.UtcNow.Date.AddDays(-6);
+
+            var weeklyXp = await _context.UserActivities
+                .Where(a => a.UserId == userId && a.CreatedDate >= sevenDaysAgo)
+                .GroupBy(a => a.CreatedDate.Date)
+                .Select(g => new
+                {
+                    Day = g.Key.ToString("dd/MM"),
+                    TotalXP = g.Sum(a => a.EarnedXP)
+                })
+                .OrderBy(x => x.Day)
+                .ToListAsync();
+
+            var categoryDistribution = await _context.UserActivities
+                .Where(a => a.UserId == userId && a.CreatedDate >= sevenDaysAgo)
+                .Include(a => a.Category)
+                .GroupBy(a => a.Category.Name)
+                .Select(g => new
+                {
+                    CategoryName = g.Key,
+                    TotalMinutes = g.Sum(a => a.DurationMinutes)
+                })
+                .ToListAsync();
+
+            return Ok(new { WeeklyXp = weeklyXp, CategoryDistribution = categoryDistribution });
+        }
     }
 }

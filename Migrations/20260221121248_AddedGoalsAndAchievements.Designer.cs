@@ -3,6 +3,7 @@ using System;
 using LifeOs.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace LifeOS.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260221121248_AddedGoalsAndAchievements")]
+    partial class AddedGoalsAndAchievements
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,59 +24,6 @@ namespace LifeOS.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
-
-            modelBuilder.Entity("LifeOs.Entities.Achievement", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("IconUrl")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<int>("RequirementValue")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Achievements");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Description = "İlk aktiviteni tamamladın!",
-                            IconUrl = "medal_bronze.png",
-                            Name = "İlk Adım",
-                            RequirementValue = 1
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Description = "500 XP barajını aştın!",
-                            IconUrl = "medal_silver.png",
-                            Name = "XP Avcısı",
-                            RequirementValue = 500
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Description = "Haftalık hedefini tamamladın!",
-                            IconUrl = "medal_gold.png",
-                            Name = "Haftalık Savaşçı",
-                            RequirementValue = 1
-                        });
-                });
 
             modelBuilder.Entity("LifeOs.Entities.Category", b =>
                 {
@@ -113,7 +63,7 @@ namespace LifeOS.Migrations
                         {
                             Id = 1,
                             ColorHex = "#FF4B2B",
-                            CreatedDate = new DateTime(2026, 2, 21, 12, 26, 22, 848, DateTimeKind.Utc).AddTicks(2493),
+                            CreatedDate = new DateTime(2026, 2, 21, 12, 12, 47, 635, DateTimeKind.Utc).AddTicks(3941),
                             Icon = "fitness",
                             IsDeleted = false,
                             Name = "Physical",
@@ -123,7 +73,7 @@ namespace LifeOS.Migrations
                         {
                             Id = 2,
                             ColorHex = "#AF40FF",
-                            CreatedDate = new DateTime(2026, 2, 21, 12, 26, 22, 848, DateTimeKind.Utc).AddTicks(3183),
+                            CreatedDate = new DateTime(2026, 2, 21, 12, 12, 47, 635, DateTimeKind.Utc).AddTicks(4569),
                             Icon = "school",
                             IsDeleted = false,
                             Name = "Learning",
@@ -133,7 +83,7 @@ namespace LifeOS.Migrations
                         {
                             Id = 3,
                             ColorHex = "#2196F3",
-                            CreatedDate = new DateTime(2026, 2, 21, 12, 26, 22, 848, DateTimeKind.Utc).AddTicks(3184),
+                            CreatedDate = new DateTime(2026, 2, 21, 12, 12, 47, 635, DateTimeKind.Utc).AddTicks(4570),
                             Icon = "work",
                             IsDeleted = false,
                             Name = "Work",
@@ -143,7 +93,7 @@ namespace LifeOS.Migrations
                         {
                             Id = 4,
                             ColorHex = "#4CAF50",
-                            CreatedDate = new DateTime(2026, 2, 21, 12, 26, 22, 848, DateTimeKind.Utc).AddTicks(3185),
+                            CreatedDate = new DateTime(2026, 2, 21, 12, 12, 47, 635, DateTimeKind.Utc).AddTicks(4571),
                             Icon = "groups",
                             IsDeleted = false,
                             Name = "Social",
@@ -153,7 +103,7 @@ namespace LifeOS.Migrations
                         {
                             Id = 5,
                             ColorHex = "#FFC107",
-                            CreatedDate = new DateTime(2026, 2, 21, 12, 26, 22, 848, DateTimeKind.Utc).AddTicks(3186),
+                            CreatedDate = new DateTime(2026, 2, 21, 12, 12, 47, 635, DateTimeKind.Utc).AddTicks(4572),
                             Icon = "self-improvement",
                             IsDeleted = false,
                             Name = "Mental",
@@ -163,7 +113,7 @@ namespace LifeOS.Migrations
                         {
                             Id = 6,
                             ColorHex = "#E91E63",
-                            CreatedDate = new DateTime(2026, 2, 21, 12, 26, 22, 848, DateTimeKind.Utc).AddTicks(3187),
+                            CreatedDate = new DateTime(2026, 2, 21, 12, 12, 47, 635, DateTimeKind.Utc).AddTicks(4573),
                             Icon = "palette",
                             IsDeleted = false,
                             Name = "Creative",
@@ -207,12 +157,12 @@ namespace LifeOS.Migrations
                         new
                         {
                             Id = 1,
-                            CurrentLevelXP = 579,
+                            CurrentLevelXP = 0,
                             FullName = "Kerem Taşdemir",
                             IdentityId = "26867e6c-bb13-4843-a261-8d0e03e0d038",
                             Level = 1,
                             NextLevelXP = 1000,
-                            TotalXP = 579
+                            TotalXP = 0
                         },
                         new
                         {
@@ -244,29 +194,6 @@ namespace LifeOS.Migrations
                             NextLevelXP = 2000,
                             TotalXP = 1200
                         });
-                });
-
-            modelBuilder.Entity("LifeOs.Entities.UserAchievement", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("AchievementId")
-                        .HasColumnType("integer");
-
-                    b.Property<DateTime>("EarnedDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("UserAchievements");
                 });
 
             modelBuilder.Entity("LifeOs.Entities.UserActivity", b =>
@@ -310,59 +237,10 @@ namespace LifeOS.Migrations
                     b.ToTable("UserActivities");
                 });
 
-            modelBuilder.Entity("LifeOs.Entities.WeeklyGoal", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("CategoryId")
-                        .HasColumnType("integer");
-
-                    b.Property<DateTime>("StartDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<int>("TargetMinutes")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CategoryId");
-
-                    b.ToTable("WeeklyGoals");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            CategoryId = 2,
-                            StartDate = new DateTime(2026, 2, 21, 0, 0, 0, 0, DateTimeKind.Utc),
-                            TargetMinutes = 300,
-                            UserId = "26867e6c-bb13-4843-a261-8d0e03e0d038"
-                        });
-                });
-
             modelBuilder.Entity("LifeOs.Entities.UserActivity", b =>
                 {
                     b.HasOne("LifeOs.Entities.Category", "Category")
                         .WithMany("UserActivities")
-                        .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Category");
-                });
-
-            modelBuilder.Entity("LifeOs.Entities.WeeklyGoal", b =>
-                {
-                    b.HasOne("LifeOs.Entities.Category", "Category")
-                        .WithMany()
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();

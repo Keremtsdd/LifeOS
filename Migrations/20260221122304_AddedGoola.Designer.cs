@@ -3,6 +3,7 @@ using System;
 using LifeOs.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace LifeOS.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260221122304_AddedGoola")]
+    partial class AddedGoola
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -113,7 +116,7 @@ namespace LifeOS.Migrations
                         {
                             Id = 1,
                             ColorHex = "#FF4B2B",
-                            CreatedDate = new DateTime(2026, 2, 21, 12, 26, 22, 848, DateTimeKind.Utc).AddTicks(2493),
+                            CreatedDate = new DateTime(2026, 2, 21, 12, 23, 3, 592, DateTimeKind.Utc).AddTicks(2133),
                             Icon = "fitness",
                             IsDeleted = false,
                             Name = "Physical",
@@ -123,7 +126,7 @@ namespace LifeOS.Migrations
                         {
                             Id = 2,
                             ColorHex = "#AF40FF",
-                            CreatedDate = new DateTime(2026, 2, 21, 12, 26, 22, 848, DateTimeKind.Utc).AddTicks(3183),
+                            CreatedDate = new DateTime(2026, 2, 21, 12, 23, 3, 592, DateTimeKind.Utc).AddTicks(2773),
                             Icon = "school",
                             IsDeleted = false,
                             Name = "Learning",
@@ -133,7 +136,7 @@ namespace LifeOS.Migrations
                         {
                             Id = 3,
                             ColorHex = "#2196F3",
-                            CreatedDate = new DateTime(2026, 2, 21, 12, 26, 22, 848, DateTimeKind.Utc).AddTicks(3184),
+                            CreatedDate = new DateTime(2026, 2, 21, 12, 23, 3, 592, DateTimeKind.Utc).AddTicks(2774),
                             Icon = "work",
                             IsDeleted = false,
                             Name = "Work",
@@ -143,7 +146,7 @@ namespace LifeOS.Migrations
                         {
                             Id = 4,
                             ColorHex = "#4CAF50",
-                            CreatedDate = new DateTime(2026, 2, 21, 12, 26, 22, 848, DateTimeKind.Utc).AddTicks(3185),
+                            CreatedDate = new DateTime(2026, 2, 21, 12, 23, 3, 592, DateTimeKind.Utc).AddTicks(2775),
                             Icon = "groups",
                             IsDeleted = false,
                             Name = "Social",
@@ -153,7 +156,7 @@ namespace LifeOS.Migrations
                         {
                             Id = 5,
                             ColorHex = "#FFC107",
-                            CreatedDate = new DateTime(2026, 2, 21, 12, 26, 22, 848, DateTimeKind.Utc).AddTicks(3186),
+                            CreatedDate = new DateTime(2026, 2, 21, 12, 23, 3, 592, DateTimeKind.Utc).AddTicks(2776),
                             Icon = "self-improvement",
                             IsDeleted = false,
                             Name = "Mental",
@@ -163,7 +166,7 @@ namespace LifeOS.Migrations
                         {
                             Id = 6,
                             ColorHex = "#E91E63",
-                            CreatedDate = new DateTime(2026, 2, 21, 12, 26, 22, 848, DateTimeKind.Utc).AddTicks(3187),
+                            CreatedDate = new DateTime(2026, 2, 21, 12, 23, 3, 592, DateTimeKind.Utc).AddTicks(2777),
                             Icon = "palette",
                             IsDeleted = false,
                             Name = "Creative",
@@ -333,36 +336,13 @@ namespace LifeOS.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CategoryId");
-
                     b.ToTable("WeeklyGoals");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            CategoryId = 2,
-                            StartDate = new DateTime(2026, 2, 21, 0, 0, 0, 0, DateTimeKind.Utc),
-                            TargetMinutes = 300,
-                            UserId = "26867e6c-bb13-4843-a261-8d0e03e0d038"
-                        });
                 });
 
             modelBuilder.Entity("LifeOs.Entities.UserActivity", b =>
                 {
                     b.HasOne("LifeOs.Entities.Category", "Category")
                         .WithMany("UserActivities")
-                        .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Category");
-                });
-
-            modelBuilder.Entity("LifeOs.Entities.WeeklyGoal", b =>
-                {
-                    b.HasOne("LifeOs.Entities.Category", "Category")
-                        .WithMany()
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
