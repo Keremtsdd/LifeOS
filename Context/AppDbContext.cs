@@ -38,7 +38,10 @@ namespace LifeOs.Context
                     TotalXP = 0,
                     CurrentLevelXP = 0,
                     NextLevelXP = 1000
-                }
+                },
+                new User { Id = 3, IdentityId = "bot-002", FullName = "Zeynep Kaya", Level = 3, TotalXP = 2500, NextLevelXP = 3000 },
+                new User { Id = 4, IdentityId = "bot-003", FullName = "Mert Demir", Level = 1, TotalXP = 300, NextLevelXP = 1000 },
+                new User { Id = 5, IdentityId = "bot-004", FullName = "Selin Aydın", Level = 2, TotalXP = 1200, NextLevelXP = 2000 }
             );
 
             base.OnModelCreating(modelBuilder);

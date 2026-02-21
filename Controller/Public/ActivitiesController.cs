@@ -73,5 +73,81 @@ namespace LifeOs.Controller.Public
             var result = _mapper.Map<List<ActivityDto>>(activities);
             return Ok(result);
         }
+
+        [HttpGet("dailysummary")]
+        public async Task<IActionResult> GetDailySummary()
+        {
+            var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            var today = DateTime.UtcNow.Date;
+
+            var dailyActivity = await _context.UserActivities
+                .Where(c => c.UserId == userId && c.CreatedDate >= today && !c.IsDeleted)
+                .Include(c => c.Category)
+                .ToListAsync();
+            Console.WriteLine(userId);
+
+            var summary = new
+            {
+                TotalXP = dailyActivity.Sum(a => a.EarnedXP),
+                TotalMinutes = dailyActivity.Sum(a => a.DurationMinutes),
+                ActivityCount = dailyActivity.Count,
+                TopCategory = dailyActivity
+                              .GroupBy(a => a.Category.Name)
+                              .OrderByDescending(a => a.Count())
+                              .Select(a => a.Key)
+                              .FirstOrDefault() ?? "Henüz Yok"
+            };
+            return Ok(summary);
+
+        }
+
+        [HttpGet("stats")]
+        public async Task<IActionResult> GetUserStats()
+        {
+            var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+
+            var stats = await _context.UserActivities
+                .Where(c => c.UserId == userId && !c.IsDeleted)
+                .GroupBy(c => 1)
+                .Select(c => new
+                {
+                    TotalMinutes = c.Sum(g => g.DurationMinutes),
+                    TotalActivities = c.Count(),
+                    TopCategory = c.GroupBy(c => c.CategoryId)
+                    .OrderByDescending(cg => cg.Count())
+                    .Select(cg => cg.Key)
+                    .FirstOrDefault()
+                })
+                .FirstOrDefaultAsync();
+
+            return Ok(stats);
+        }
+
+        [HttpGet("leaderboard")]
+        public async Task<IActionResult> GetLeaderboard(int page = 1, int pageSize = 10)
+        {
+            var currentUserId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+
+            var topUsers = await _context.Users
+                .OrderByDescending(u => u.TotalXP)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .Select(u => new { u.FullName, u.Level, u.TotalXP })
+                .ToListAsync();
+
+            var currentUser = await _context.Users.FirstOrDefaultAsync(u => u.IdentityId == currentUserId);
+            int myRank = 0;
+            if (currentUser != null)
+            {
+                myRank = await _context.Users.CountAsync(u => u.TotalXP > currentUser.TotalXP) + 1;
+            }
+
+            return Ok(new
+            {
+                TopUsers = topUsers,
+                MyRank = myRank,
+                MyInfo = new { currentUser?.FullName, currentUser?.TotalXP, currentUser?.Level }
+            });
+        }
     }
 }

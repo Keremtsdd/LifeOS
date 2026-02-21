@@ -57,5 +57,16 @@ namespace LifeOs.Services
                 user.NextLevelXP = (int)(user.NextLevelXP * 1.2);
             }
         }
+
+        public async Task<bool> ProgressLevelUp(User user)
+        {
+            while (user.TotalXP >= user.NextLevelXP)
+            {
+                user.Level++;
+                user.CurrentLevelXP = user.TotalXP - user.NextLevelXP;
+                user.NextLevelXP = (int)(user.NextLevelXP * 1.2);
+            }
+            return true;
+        }
     }
 }
