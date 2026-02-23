@@ -59,7 +59,7 @@ namespace LifeOs.Controller.Public
             return Ok(categoryDtos);
         }
 
-        [HttpGet("myactivities")]
+        [HttpGet("my-activities")]
         public async Task<IActionResult> GetUserActivities()
         {
             string userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
@@ -74,7 +74,7 @@ namespace LifeOs.Controller.Public
             return Ok(result);
         }
 
-        [HttpGet("dailysummary")]
+        [HttpGet("daily-summary")]
         public async Task<IActionResult> GetDailySummary()
         {
             var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
@@ -173,14 +173,17 @@ namespace LifeOs.Controller.Public
             return Ok(goals);
         }
 
-        [HttpGet("weeklyxpchart")]
+        [HttpGet("weekly-xp-chart")]
         public async Task<IActionResult> GetWeeklyXpChart()
         {
             var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
             var sevenDaysAgo = DateTime.UtcNow.Date.AddDays(-7);
 
-            var chartData = await _context.UserActivities
+            var activities = await _context.UserActivities
                 .Where(a => a.UserId == userId && a.CreatedDate >= sevenDaysAgo)
+                .ToListAsync();
+
+            var chartData = activities
                 .GroupBy(a => a.CreatedDate.Date)
                 .Select(g => new
                 {
@@ -188,10 +191,11 @@ namespace LifeOs.Controller.Public
                     DailyXP = g.Sum(a => a.EarnedXP)
                 })
                 .OrderBy(x => x.Date)
-                .ToListAsync();
+                .ToList();
 
             return Ok(chartData);
         }
+
 
         [HttpGet("stats-summary")]
         public async Task<IActionResult> GetStatsSummary()
@@ -199,8 +203,12 @@ namespace LifeOs.Controller.Public
             var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
             var sevenDaysAgo = DateTime.UtcNow.Date.AddDays(-6);
 
-            var weeklyXp = await _context.UserActivities
+            var activities = await _context.UserActivities
                 .Where(a => a.UserId == userId && a.CreatedDate >= sevenDaysAgo)
+                .Include(a => a.Category)
+                .ToListAsync();
+
+            var weeklyXp = activities
                 .GroupBy(a => a.CreatedDate.Date)
                 .Select(g => new
                 {
@@ -208,20 +216,49 @@ namespace LifeOs.Controller.Public
                     TotalXP = g.Sum(a => a.EarnedXP)
                 })
                 .OrderBy(x => x.Day)
-                .ToListAsync();
+                .ToList();
 
-            var categoryDistribution = await _context.UserActivities
-                .Where(a => a.UserId == userId && a.CreatedDate >= sevenDaysAgo)
-                .Include(a => a.Category)
+            var categoryDistribution = activities
                 .GroupBy(a => a.Category.Name)
                 .Select(g => new
                 {
                     CategoryName = g.Key,
                     TotalMinutes = g.Sum(a => a.DurationMinutes)
                 })
-                .ToListAsync();
+                .ToList();
 
             return Ok(new { WeeklyXp = weeklyXp, CategoryDistribution = categoryDistribution });
+        }
+
+        [HttpPut("update-activity/{id}")]
+        public async Task<IActionResult> UpdateActivity(int id, [FromBody] ActivityUpdateDto dto)
+        {
+            var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+
+            var activity = await _context.UserActivities
+                .FirstOrDefaultAsync(a => a.Id == id && a.UserId == userId);
+
+            if (activity == null) return NotFound("Aktivite bulunamadı veya güncelleme yetkiniz yok.");
+
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.IdentityId == userId);
+            var category = await _context.Categories.FindAsync(dto.CategoryId);
+
+            if (user != null && category != null)
+            {
+                user.TotalXP -= activity.EarnedXP;
+
+                int newEarnedXp = (int)(dto.DurationMinutes * category.XPMultiplier);
+
+                activity.CategoryId = dto.CategoryId;
+                activity.DurationMinutes = dto.DurationMinutes;
+                activity.EarnedXP = newEarnedXp;
+                activity.Title = dto.Title;
+
+                user.TotalXP += newEarnedXp;
+            }
+
+            await _context.SaveChangesAsync();
+            return Ok(new { message = "Aktivite güncellendi!", newXP = activity.EarnedXP });
         }
     }
 }

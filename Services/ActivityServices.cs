@@ -37,6 +37,12 @@ namespace LifeOs.Services
             await _context.UserActivities.AddAsync(activity);
             await UpdateUserProgress(userId, earnedXp);
 
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.IdentityId == userId);
+            if (user != null)
+            {
+                await CheckAndAwardAchievements(userId, user.TotalXP);
+            }
+
             await _unitOfWork.CommitAsync();
             return earnedXp;
         }
@@ -58,6 +64,28 @@ namespace LifeOs.Services
             }
         }
 
+        private async Task CheckAndAwardAchievements(string userId, int totalXp)
+        {
+            var ownedAchievementIds = await _context.UserAchievements
+                .Where(ua => ua.UserId == userId)
+                .Select(ua => ua.AchievementId)
+                .ToListAsync();
+
+            var newAchievements = await _context.Achievements
+                .Where(a => !ownedAchievementIds.Contains(a.Id) && totalXp >= a.RequirementValue)
+                .ToListAsync();
+
+            foreach (var achievement in newAchievements)
+            {
+                _context.UserAchievements.Add(new UserAchievement
+                {
+                    UserId = userId,
+                    AchievementId = achievement.Id,
+                    EarnedDate = DateTime.UtcNow
+                });
+            }
+        }
+
         public async Task<bool> ProgressLevelUp(User user)
         {
             while (user.TotalXP >= user.NextLevelXP)
@@ -68,5 +96,6 @@ namespace LifeOs.Services
             }
             return true;
         }
+
     }
 }
