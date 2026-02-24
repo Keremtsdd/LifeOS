@@ -196,7 +196,6 @@ namespace LifeOs.Controller.Public
             return Ok(chartData);
         }
 
-
         [HttpGet("stats-summary")]
         public async Task<IActionResult> GetStatsSummary()
         {

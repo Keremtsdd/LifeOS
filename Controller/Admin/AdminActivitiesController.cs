@@ -36,6 +36,14 @@ namespace LifeOs.Controller.Admin
             return Ok(new { message = "Kategori başarıyla eklendi!", id = category.Id });
         }
 
+        [HttpPost("add-weekly-goal")]
+        public async Task<IActionResult> AddWeeklyGoal([FromBody] WeeklyGoal goal)
+        {
+            _context.WeeklyGoals.Add(goal);
+            await _context.SaveChangesAsync();
+            return Ok(new { message = "Haftalık hedef başarıyla oluşturuldu!", id = goal.Id });
+        }
+
         [HttpPost("add-achievement")]
         public async Task<IActionResult> AddAchievement([FromBody] AchievementCreateDto dto)
         {
@@ -162,6 +170,34 @@ namespace LifeOs.Controller.Admin
             await _context.SaveChangesAsync();
 
             return Ok(new { message = $"{user.Email} kullanıcısı ve tüm verileri kalıcı olarak silindi." });
+        }
+
+        [HttpGet("goal-progress/{userId}")]
+        public async Task<IActionResult> GetGoalProgress(int userId)
+        {
+            var activeGoal = await _context.WeeklyGoals
+                .Where(g => g.IsActive && g.EndDate >= DateTime.UtcNow)
+                .OrderByDescending(g => g.StartDate)
+                .FirstOrDefaultAsync();
+
+            if (activeGoal == null) return NotFound("Aktif bir hedef bulunamadı.");
+
+            var userEarnedXp = await _context.UserActivities
+                .Where(a => a.UserId == userId.ToString() &&
+                            a.CreatedDate >= activeGoal.StartDate &&
+                            a.CreatedDate <= activeGoal.EndDate)
+                .SumAsync(a => a.EarnedXP);
+
+            var progressPercentage = (double)userEarnedXp / activeGoal.TargetXP * 100;
+
+            return Ok(new
+            {
+                GoalTitle = activeGoal.Title,
+                Target = activeGoal.TargetXP,
+                Current = userEarnedXp,
+                Percentage = Math.Min(progressPercentage, 100),
+                RemainingDays = (activeGoal.EndDate - DateTime.UtcNow).Days
+            });
         }
 
         [HttpPost("add-user")]
