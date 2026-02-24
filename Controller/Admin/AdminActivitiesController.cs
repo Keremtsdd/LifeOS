@@ -64,23 +64,28 @@ namespace LifeOs.Controller.Admin
         {
             var sevenDaysAgo = DateTime.UtcNow.AddDays(-7);
 
-            var users = await _context.Users
+            var usersQuery = await _context.Users
                 .Select(u => new
                 {
                     u.Id,
+                    u.IdentityId,
                     Email = u.Email ?? "Bilinmiyor",
                     TotalXP = _context.UserActivities
-                        .Where(a => a.UserId == u.Id.ToString())
+                        .Where(a => a.UserId == u.IdentityId)
                         .Sum(a => (double?)a.EarnedXP) ?? 0,
+
                     LastActivityDate = _context.UserActivities
-                        .Where(a => a.UserId == u.Id.ToString())
+                        .Where(a => a.UserId == u.IdentityId)
                         .OrderByDescending(a => a.CreatedDate)
                         .Select(a => (DateTime?)a.CreatedDate)
                         .FirstOrDefault(),
+
                     ActivityCount = _context.UserActivities
-                        .Count(a => a.UserId == u.Id.ToString()),
+                        .Where(a => a.UserId == u.IdentityId)
+                        .Count(),
+
                     WeeklyProgress = _context.UserActivities
-                        .Where(a => a.UserId == u.Id.ToString() && a.CreatedDate >= sevenDaysAgo)
+                        .Where(a => a.UserId == u.IdentityId && a.CreatedDate >= sevenDaysAgo)
                         .GroupBy(a => a.CreatedDate.Date)
                         .Select(g => new
                         {
@@ -92,13 +97,15 @@ namespace LifeOs.Controller.Admin
                 .OrderByDescending(u => u.TotalXP)
                 .ToListAsync();
 
-            var formattedResults = users.Select(u => new
+            var formattedResults = usersQuery.Select(u => new
             {
                 u.Id,
                 u.Email,
                 u.TotalXP,
                 u.ActivityCount,
-                LastActivity = u.LastActivityDate == null ? "Hiç aktivite yok" : u.LastActivityDate.Value.ToString("dd/MM/yyyy HH:mm"),
+                LastActivity = u.LastActivityDate == null
+                    ? "Hiç aktivite yok"
+                    : u.LastActivityDate.Value.ToString("dd/MM/yyyy HH:mm"),
                 WeeklyChart = u.WeeklyProgress.Select(p => new
                 {
                     Day = p.Date.ToString("dd/MM"),

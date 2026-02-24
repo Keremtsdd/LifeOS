@@ -27,23 +27,35 @@ namespace LifeOs.Controller.Public
         [HttpPost("create")]
         public async Task<IActionResult> CreateActivity([FromBody] ActivityCreateDto dto)
         {
-            string userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            // 1. Supabase token'larındaki gerçek ID 'sub' claim'i içindedir.
+            // Hem NameIdentifier hem de direkt "sub" kontrolü yaparak işi şansa bırakmıyoruz.
+            string userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value
+                         ?? User.FindFirst("sub")?.Value;
+
+            // 2. Güvenlik Kontrolü: Eğer userId hala null ise token geçersizdir veya yanlış çözülmüştür.
+            if (string.IsNullOrEmpty(userId))
+                return Unauthorized(new { message = "Kullanıcı kimliği doğrulanamadı. Lütfen tekrar giriş yapın." });
 
             if (dto.DurationMinutes <= 0)
                 return BadRequest(new { message = "Süre 0'dan büyük olmalıdır." });
 
             try
             {
+                // 3. Aktiviteyi oluştur ve kazanılan XP'yi al.
                 var earnedXP = await _services.CreateActivityAsync(dto, userId);
+
                 return Ok(new
                 {
                     message = "Aktivite buluta başarıyla kaydedildi!",
-                    earnedXP = earnedXP
+                    earnedXP = earnedXP,
+                    userId = userId // Test için dönen ID'yi görelim
                 });
             }
             catch (Exception ex)
             {
-                return BadRequest(new { message = "Kayıt sırasında hata oluştu.", detail = ex.Message });
+                // İç hata mesajını (InnerException) yakalayarak veritabanındaki sorunu daha net görebiliriz.
+                var detail = ex.InnerException != null ? ex.InnerException.Message : ex.Message;
+                return BadRequest(new { message = "Kayıt sırasında hata oluştu.", detail = detail });
             }
         }
 
