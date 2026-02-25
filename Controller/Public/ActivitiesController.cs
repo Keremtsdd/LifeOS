@@ -115,23 +115,13 @@ namespace LifeOs.Controller.Public
         [HttpGet("stats")]
         public async Task<IActionResult> GetUserStats()
         {
-            var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            var allStats = await _services.GetAllUsersStatsAsync();
 
-            var stats = await _context.UserActivities
-                .Where(c => c.UserId == userId && !c.IsDeleted)
-                .GroupBy(c => 1)
-                .Select(c => new
-                {
-                    TotalMinutes = c.Sum(g => g.DurationMinutes),
-                    TotalActivities = c.Count(),
-                    TopCategory = c.GroupBy(c => c.CategoryId)
-                    .OrderByDescending(cg => cg.Count())
-                    .Select(cg => cg.Key)
-                    .FirstOrDefault()
-                })
-                .FirstOrDefaultAsync();
+            var Stats = allStats.FirstOrDefault(u => u.Id == 6);
 
-            return Ok(stats);
+            if (Stats == null) return NotFound("Kullanıcı istatistikleri bulunamadı.");
+
+            return Ok(Stats);
         }
 
         [HttpGet("leaderboard")]

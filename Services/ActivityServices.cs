@@ -97,5 +97,49 @@ namespace LifeOs.Services
             return true;
         }
 
+        public async Task<List<UserStatsDto>> GetAllUsersStatsAsync()
+        {
+            var users = await _context.Users.ToListAsync();
+            var statsList = new List<UserStatsDto>();
+
+            foreach (var user in users)
+            {
+                var userActivities = await _context.UserActivities
+                    .Include(ua => ua.Category)
+                    .Where(ua => ua.UserId == user.IdentityId && !ua.IsDeleted)
+                    .OrderByDescending(ua => ua.CreatedDate)
+                    .ToListAsync();
+
+                var stats = new UserStatsDto
+                {
+                    Id = user.Id,
+                    FullName = user.FullName,
+                    TotalXP = user.TotalXP,
+                    Level = user.Level,
+                    NextLevelXP = user.NextLevelXP,
+                    ActivityCount = userActivities.Count,
+                    LastActivity = userActivities.FirstOrDefault()?.CreatedDate.ToString("dd MMMM dddd", new System.Globalization.CultureInfo("tr-TR")) ?? "Kayıt Yok",
+
+                    RecentActivities = userActivities.Take(4).Select(ua => new RecentActivityDto
+                    {
+                        Title = ua.Title,
+                        CategoryName = ua.Category.Name,
+                        DurationMinutes = ua.DurationMinutes,
+                        Date = ua.CreatedDate.ToString("dd MMM", new System.Globalization.CultureInfo("tr-TR"))
+                    }).ToList(),
+
+                    WeeklyChart = userActivities
+                        .Where(ua => ua.CreatedDate >= DateTime.UtcNow.AddDays(-7))
+                        .GroupBy(ua => ua.CreatedDate.ToString("dd/MM"))
+                        .Select(g => new WeeklyChartDto { Day = g.Key, Xp = g.Sum(x => x.EarnedXP) })
+                        .ToList()
+                };
+
+                statsList.Add(stats);
+            }
+
+            return statsList;
+        }
+
     }
 }
