@@ -270,5 +270,22 @@ namespace LifeOs.Controller.Public
             await _context.SaveChangesAsync();
             return Ok(new { message = "Aktivite güncellendi!", newXP = activity.EarnedXP });
         }
+
+        [HttpGet("achievements")]
+        public async Task<IActionResult> GetAchievements()
+        {
+            var achievements = await _context.Achievements
+                .OrderBy(a => a.RequirementValue)
+                .Select(a => new
+                {
+                    a.Id,
+                    a.Name,
+                    a.Description,
+                    a.IconUrl,
+                    a.RequirementValue
+                })
+                .ToListAsync();
+            return Ok(achievements);
+        }
     }
 }

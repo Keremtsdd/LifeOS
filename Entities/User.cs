@@ -12,5 +12,6 @@ namespace LifeOs.Entities
         public int TotalXP { get; set; } = 0;
         public int CurrentLevelXP { get; set; } = 0;
         public int NextLevelXP { get; set; } = 1000;
+        public virtual ICollection<UserActivity> Activities { get; set; } = new List<UserActivity>();
     }
 }

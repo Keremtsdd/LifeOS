@@ -3,6 +3,7 @@ using System;
 using LifeOs.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace LifeOS.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260225123939_loginUpdater")]
+    partial class loginUpdater
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -183,14 +186,9 @@ namespace LifeOS.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int?>("UserId1")
-                        .HasColumnType("integer");
-
                     b.HasKey("Id");
 
                     b.HasIndex("CategoryId");
-
-                    b.HasIndex("UserId1");
 
                     b.ToTable("UserActivities");
                 });
@@ -244,10 +242,6 @@ namespace LifeOS.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("LifeOs.Entities.User", null)
-                        .WithMany("Activities")
-                        .HasForeignKey("UserId1");
-
                     b.Navigation("Category");
                 });
 
@@ -265,11 +259,6 @@ namespace LifeOS.Migrations
             modelBuilder.Entity("LifeOs.Entities.Category", b =>
                 {
                     b.Navigation("UserActivities");
-                });
-
-            modelBuilder.Entity("LifeOs.Entities.User", b =>
-                {
-                    b.Navigation("Activities");
                 });
 #pragma warning restore 612, 618
         }
