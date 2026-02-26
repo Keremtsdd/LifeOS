@@ -197,34 +197,31 @@ namespace LifeOs.Controller.Public
             return Ok(chartData);
         }
 
+        [Authorize]
         [HttpGet("stats-summary")]
         public async Task<IActionResult> GetStatsSummary()
         {
-            var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value
+                         ?? User.FindFirst("sub")?.Value;
+
+            if (string.IsNullOrEmpty(userId)) return Unauthorized();
+
             var sevenDaysAgo = DateTime.UtcNow.Date.AddDays(-6);
 
             var activities = await _context.UserActivities
-                .Where(a => a.UserId == userId && a.CreatedDate >= sevenDaysAgo)
+                .Where(a => a.UserId == userId && a.CreatedDate >= sevenDaysAgo && !a.IsDeleted)
                 .Include(a => a.Category)
                 .ToListAsync();
 
             var weeklyXp = activities
                 .GroupBy(a => a.CreatedDate.Date)
-                .Select(g => new
-                {
-                    Day = g.Key.ToString("dd/MM"),
-                    TotalXP = g.Sum(a => a.EarnedXP)
-                })
+                .Select(g => new { Day = g.Key.ToString("dd/MM"), TotalXP = g.Sum(a => a.EarnedXP) })
                 .OrderBy(x => x.Day)
                 .ToList();
 
             var categoryDistribution = activities
                 .GroupBy(a => a.Category.Name)
-                .Select(g => new
-                {
-                    CategoryName = g.Key,
-                    TotalMinutes = g.Sum(a => a.DurationMinutes)
-                })
+                .Select(g => new { CategoryName = g.Key, TotalMinutes = g.Sum(a => a.DurationMinutes) })
                 .ToList();
 
             return Ok(new { WeeklyXp = weeklyXp, CategoryDistribution = categoryDistribution });
