@@ -258,6 +258,32 @@ namespace LifeOs.Controller.Public
             return Ok(new { message = "Aktivite güncellendi!", newXP = activity.EarnedXP });
         }
 
+        [Authorize]
+        [HttpGet("user-profile")]
+        public async Task<IActionResult> GetUserProfile()
+        {
+            var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value
+                         ?? User.FindFirst("sub")?.Value;
+
+            var totalXp = await _context.UserActivities
+                .Where(a => a.UserId == userId && !a.IsDeleted)
+                .SumAsync(a => a.EarnedXP);
+
+            // Basit bir seviye mantığı: Her 1000 XP bir seviye
+            int level = (totalXp / 1000) + 1;
+            int currentLevelXp = totalXp % 1000;
+            double progress = currentLevelXp / 1000.0;
+
+            return Ok(new
+            {
+                TotalXp = totalXp,
+                Level = level,
+                Progress = progress,
+                CurrentLevelXp = currentLevelXp,
+                NextLevelXp = 1000
+            });
+        }
+
         [HttpGet("achievements")]
         public async Task<IActionResult> GetAchievements()
         {
