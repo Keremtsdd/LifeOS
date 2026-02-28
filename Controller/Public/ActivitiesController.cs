@@ -265,17 +265,27 @@ namespace LifeOs.Controller.Public
             var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value
                          ?? User.FindFirst("sub")?.Value;
 
+            if (string.IsNullOrEmpty(userId))
+                return Unauthorized();
+
+            var user = await _context.Users
+                .FirstOrDefaultAsync(u => u.IdentityId == userId);
+
+            if (user == null)
+                return NotFound("Kullanıcı bulunamadı.");
+
             var totalXp = await _context.UserActivities
                 .Where(a => a.UserId == userId && !a.IsDeleted)
                 .SumAsync(a => a.EarnedXP);
 
-            // Basit bir seviye mantığı: Her 1000 XP bir seviye
             int level = (totalXp / 1000) + 1;
             int currentLevelXp = totalXp % 1000;
             double progress = currentLevelXp / 1000.0;
 
             return Ok(new
             {
+                user.FullName,
+                user.ProfilePictureUrl,   // 👈 BUNU EKLEDİK
                 TotalXp = totalXp,
                 Level = level,
                 Progress = progress,

@@ -6,6 +6,7 @@ namespace LifeOs.Entities
         public string IdentityId { get; set; }
         public string FullName { get; set; }
         public string Email { get; set; }
+        public string? ProfilePictureUrl { get; set; }
         public DateTime CreatedDate { get; set; } = DateTime.UtcNow;
         public bool IsActive { get; set; } = true;
         public int Level { get; set; } = 1;

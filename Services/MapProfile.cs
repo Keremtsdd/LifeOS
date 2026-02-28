@@ -21,6 +21,8 @@ namespace LifeOs.Mappings
                 .ForMember(dest => dest.ColorHex, opt => opt.MapFrom(src => src.ColorHex))
                 .ForMember(dest => dest.Score, opt => opt.Ignore())
                 .ForMember(dest => dest.Percentage, opt => opt.Ignore());
+
+            CreateMap<User, UserProfileDto>();
         }
     }
 }
