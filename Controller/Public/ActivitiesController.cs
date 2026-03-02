@@ -5,6 +5,7 @@ using LifeOs.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 namespace LifeOs.Controller.Public
 {
@@ -127,13 +128,14 @@ namespace LifeOs.Controller.Public
         [HttpGet("leaderboard")]
         public async Task<IActionResult> GetLeaderboard(int page = 1, int pageSize = 10)
         {
-            var currentUserId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            var currentUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value
+                      ?? User.FindFirst("sub")?.Value;
 
             var topUsers = await _context.Users
                 .OrderByDescending(u => u.TotalXP)
                 .Skip((page - 1) * pageSize)
                 .Take(pageSize)
-                .Select(u => new { u.FullName, u.Level, u.TotalXP })
+                .Select(u => new { u.FullName, u.Level, u.TotalXP, u.ProfilePictureUrl })
                 .ToListAsync();
 
             var currentUser = await _context.Users.FirstOrDefaultAsync(u => u.IdentityId == currentUserId);
@@ -147,7 +149,7 @@ namespace LifeOs.Controller.Public
             {
                 TopUsers = topUsers,
                 MyRank = myRank,
-                MyInfo = new { currentUser?.FullName, currentUser?.TotalXP, currentUser?.Level }
+                MyInfo = new { currentUser?.FullName, currentUser?.TotalXP, currentUser?.Level, currentUser?.ProfilePictureUrl }
             });
         }
 

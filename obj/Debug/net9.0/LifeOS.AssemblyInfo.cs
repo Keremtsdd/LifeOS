@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("LifeOS")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+91f820f5e1812b0fb83d8bea7228ba618bb5a791")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+36663026cc7fdc4398e120b658d10a53993ce466")]
 [assembly: System.Reflection.AssemblyProductAttribute("LifeOS")]
 [assembly: System.Reflection.AssemblyTitleAttribute("LifeOS")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
