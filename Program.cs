@@ -7,42 +7,60 @@ using LifeOs.Mappings;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
+
 builder.Services.AddHttpClient();
 
+#region JWT Authentication Configuration
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
-        options.Authority = builder.Configuration["Supabase:Url"] + "/auth/v1";
+        // NOT: Supabase HS256 kullanıyorsa Secret Key ile doğrulamak en sağlıklısıdır.
+        // appsettings.json dosyana "Supabase:JwtSecret" eklemelisin.
+        var jwtSecret = builder.Configuration["Supabase:JwtSecret"];
+        var key = Encoding.UTF8.GetBytes(jwtSecret);
+
         options.TokenValidationParameters = new TokenValidationParameters
         {
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(key),
             ValidateIssuer = true,
             ValidIssuer = builder.Configuration["Supabase:Url"] + "/auth/v1",
             ValidateAudience = true,
             ValidAudience = "authenticated",
-            ValidateLifetime = true
+            ValidateLifetime = true,
+            ClockSkew = TimeSpan.Zero
         };
     });
 
+#endregion
+
+#region Database Configuration
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"),
         npgsqlOptions => npgsqlOptions.CommandTimeout(120))
     .ConfigureWarnings(w => w.Ignore(Microsoft.EntityFrameworkCore.Diagnostics.RelationalEventId.PendingModelChangesWarning)));
 
+#endregion
+
+#region CORS Configuration
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowAll", builder =>
+    options.AddPolicy("AllowAll", policy =>
     {
-        builder.AllowAnyOrigin()
-               .AllowAnyMethod()
-               .AllowAnyHeader();
+        policy.AllowAnyOrigin()
+              .AllowAnyMethod()
+              .AllowAnyHeader();
     });
 });
+#endregion
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 
+#region Swagger Configuration
 builder.Services.AddSwaggerGen(options =>
 {
     options.SwaggerDoc("v1", new OpenApiInfo { Title = "LifeOS API", Version = "v1" });
@@ -66,15 +84,20 @@ builder.Services.AddSwaggerGen(options =>
         }
     });
 });
+#endregion
 
+#region Dependency Injection
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<IActivityRepository, ActivityRepository>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<ActivityServices>();
-builder.Services.AddAutoMapper(new[] { typeof(MapProfile) });
+#endregion
+
+builder.Services.AddAutoMapper(typeof(MapProfile));
 
 var app = builder.Build();
 
+#region Middleware Pipeline
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -84,12 +107,15 @@ if (app.Environment.IsDevelopment())
         options.RoutePrefix = string.Empty;
     });
 }
+#endregion
+
 app.UseStaticFiles();
 app.UseHttpsRedirection();
 app.UseCors("AllowAll");
+
 app.UseAuthentication();
 app.UseAuthorization();
-app.MapControllers();
 
+app.MapControllers();
 
 app.Run();
